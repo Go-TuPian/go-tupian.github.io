@@ -1,0 +1,106 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ---------- 全局 ---------- */
+html { background: #0a0e14; }
+body { font-feature-settings: "ss01", "cv01"; }
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(255,255,255,.042) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.042) 1px, transparent 1px);
+  background-size: 52px 52px;
+  -webkit-mask-image: radial-gradient(ellipse 95% 65% at 50% 0%, #000 32%, transparent 80%);
+  mask-image: radial-gradient(ellipse 95% 65% at 50% 0%, #000 32%, transparent 80%);
+}
+
+.ember-glow { box-shadow: 0 0 0 1px rgba(251,191,36,.18), 0 18px 60px -30px rgba(251,191,36,.35); }
+.card { background: linear-gradient(180deg, rgba(20,26,36,.92), rgba(14,17,23,.92)); }
+.hairline { box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(251,191,36,.22); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(251,191,36,.38); }
+
+.num { font-variant-numeric: tabular-nums; }
+
+/* ---------- 从皮肤图上裁 8x8 的头像 ---------- */
+.face {
+  position: relative; display: block; overflow: hidden;
+  width: var(--fs, 32px); height: var(--fs, 32px);
+  background: #1a212b; border-radius: 2px; flex: none;
+}
+.face img {
+  position: absolute;
+  width: calc(var(--fs, 32px) * 8); height: calc(var(--fs, 32px) * 8);
+  left: calc(var(--fs, 32px) * -1); top: calc(var(--fs, 32px) * -1);
+  max-width: none; max-height: none;
+  image-rendering: pixelated;
+}
+
+/* ---------- 2D 立绘：WebGL 不可用或 3D 初始化时的兜底 ---------- */
+.doll {
+  --u: 13px;
+  --skin-img: none;
+  position: relative;
+  width: calc(var(--u) * 16);
+  height: calc(var(--u) * 32);
+  filter: drop-shadow(0 22px 26px rgba(0, 0, 0, .55));
+}
+.doll .p {
+  position: absolute;
+  background-image: var(--skin-img);
+  background-repeat: no-repeat;
+  background-size: calc(var(--u) * 64) calc(var(--u) * 64);
+  image-rendering: pixelated;
+}
+.doll .p.head  { width: calc(var(--u)*8); height: calc(var(--u)*8);  left: calc(var(--u)*4);  top: 0;                 background-position: calc(var(--u)*-8)  calc(var(--u)*-8); }
+.doll .p.hat   { width: calc(var(--u)*8); height: calc(var(--u)*8);  left: calc(var(--u)*4);  top: 0;                 background-position: calc(var(--u)*-40) calc(var(--u)*-8); }
+.doll .p.body  { width: calc(var(--u)*8); height: calc(var(--u)*12); left: calc(var(--u)*4);  top: calc(var(--u)*8);  background-position: calc(var(--u)*-20) calc(var(--u)*-20); }
+.doll .p.armL  { width: calc(var(--u)*4); height: calc(var(--u)*12); left: 0;                  top: calc(var(--u)*8);  background-position: calc(var(--u)*-44) calc(var(--u)*-20); }
+.doll .p.armR  { width: calc(var(--u)*4); height: calc(var(--u)*12); left: calc(var(--u)*12); top: calc(var(--u)*8);  background-position: calc(var(--u)*-36) calc(var(--u)*-52); }
+.doll .p.legL  { width: calc(var(--u)*4); height: calc(var(--u)*12); left: calc(var(--u)*4);  top: calc(var(--u)*20); background-position: calc(var(--u)*-4)  calc(var(--u)*-20); }
+.doll .p.legR  { width: calc(var(--u)*4); height: calc(var(--u)*12); left: calc(var(--u)*8);  top: calc(var(--u)*20); background-position: calc(var(--u)*-4)  calc(var(--u)*-52); }
+@media (max-width: 640px) { .doll { --u: 10px; } }
+.doll[data-slim="1"] .p.armL,
+.doll[data-slim="1"] .p.armR { width: calc(var(--u)*3); }
+.doll[data-slim="1"] .p.armL { left: calc(var(--u)*1); }
+.doll[data-slim="1"] .p.armR { left: calc(var(--u)*12); }
+
+/* ---------- 3D 舞台 ---------- */
+#skin-stage {
+  background:
+    radial-gradient(ellipse 42% 8% at 50% 88%, rgba(251,191,36,.22), transparent 72%),
+    radial-gradient(ellipse 70% 55% at 50% 46%, rgba(38,50,68,.55), transparent 72%),
+    linear-gradient(180deg, #0d1219 0%, #090c11 100%);
+}
+#skin-stage::before {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+  background-size: 34px 34px;
+  -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 10%, transparent 72%);
+  mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 10%, transparent 72%);
+}
+#skin-canvas { display: block; width: 100%; height: 100%; cursor: grab; }
+#skin-canvas:active { cursor: grabbing; }
+.stage-fade { -webkit-mask-image: linear-gradient(180deg, #000 82%, transparent 100%); mask-image: linear-gradient(180deg, #000 82%, transparent 100%); }
+.chip-toggle[data-on="1"] { border-color: rgba(251,191,36,.45); background: rgba(251,191,36,.12); color: #fbbf24; }
+
+/* ---------- 流水刷新 ---------- */
+.fade-in { animation: fadeIn .35s ease-out both; }
+@keyframes fadeIn { from { opacity: .35; } to { opacity: 1; } }
+
+/* 静态站没有 SSR，首屏给一点淡入，避免骨架跳变 */
+.boot { opacity: 0; transition: opacity .25s ease-out; }
+.boot.on { opacity: 1; }
+
+.face .ini {
+  position: absolute; inset: 0;
+  display: grid; place-items: center;
+  font-size: calc(var(--fs, 32px) * .42);
+  font-weight: 700; color: #64748b; letter-spacing: .02em;
+}
