@@ -9,7 +9,7 @@ window.TACZ_CONFIG = {
   apiBase: 'https://pvp.676168.xyz',
 
   /* 后端 config.json 里 apiToken 非空时，这里要填一样的值 */
-  apiToken: 'pvp-webui-token',
+  apiToken: '',
 
   /* 站点文案 */
   siteName: 'TACZ PVP',
